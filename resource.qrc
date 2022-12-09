@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icon/button.png</file>
+        <file>icon/close.png</file>
+        <file>icon/copy.png</file>
+        <file>icon/tray.png</file>
+    </qresource>
+</RCC>
