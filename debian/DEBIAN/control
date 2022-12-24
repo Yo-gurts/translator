@@ -1,0 +1,8 @@
+Package: translator
+Version: 1.0.0
+Architecture: all
+Maintainer: yogurt <yusong1117.u@gmail.com>
+Installed-Size: 1528
+Depends: libqt5widgets5, libqt5gui5, libqt5network5, libqt5core5a, libk5crypto3
+Description:
+    a simple translator.
