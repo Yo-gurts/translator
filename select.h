@@ -25,12 +25,15 @@ private:
     QCursor cursor;         /* 获取光标位置，显示按键 */
     QPoint pos;             /* 光标的当前位置 */
     QTimer timer;           /* 定时器，让按键超时消失 */
+    QTimer selectTimer;     /* 定时器，防止鼠标选择过程中产生大量信号 */
     QString text;           /* 记录选中的字符串 */
 
 private slots:
     void dataChanged();
     void clickButton();
     void timeout();
+    void changed(QClipboard::Mode mode);
+    void showButton();
 
 signals:
     /* 通知需要进行翻译 */

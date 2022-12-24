@@ -21,10 +21,16 @@ Select::Select(QObject *parent)
                           "QPushButton:hover{background-color:rgba(240,240,240,1);}"
                           "QPushButton:pressed{background-color:rgba(200,200,200,1);}");
 
+    /* 设置定时器只触发一次，而不是周期触发 */
+    timer.setSingleShot(true);
+    selectTimer.setSingleShot(true);
+
     /* 粘贴板中内容改变时，触发动作 */
     QObject::connect(clip, &QClipboard::dataChanged, this, &Select::dataChanged);
     QObject::connect(button, &QPushButton::clicked, this, &Select::clickButton);
     QObject::connect(&timer, &QTimer::timeout, this, &Select::timeout);
+    QObject::connect(clip, &QClipboard::changed, this, &Select::changed);
+    QObject::connect(&selectTimer, &QTimer::timeout, this, &Select::showButton);
 }
 
 /**
@@ -68,4 +74,36 @@ void Select::clickButton()
 void Select::timeout()
 {
     button->setVisible(false);
+}
+
+/**
+ * @brief 选择过程中会有clip::changed信号，处理该信号的函数
+ */
+void Select::changed(QClipboard::Mode mode)
+{
+    if (mode == QClipboard::Selection) {
+        selectTimer.start(200);     /* 200 ms */
+        pos = cursor.pos();
+    }
+}
+
+/**
+ * @brief 选中文字后，显示按钮
+ */
+void Select::showButton()
+{
+    QString str = clip->text(QClipboard::Selection);
+
+    /* 针对 pdf 的内容 */
+    str.replace("\r\n", " ");
+    str.replace("\n", " ");
+
+    if (str != "") {
+        text = str;
+        qDebug() << "showButton: " << str;
+
+        button->move(pos);      /* 让按键显示在光标的位置 */
+        timer.start(2000);      /* 开始 2 秒倒计时 */
+        button->setVisible(true);
+    }
 }
