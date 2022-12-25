@@ -11,6 +11,7 @@ int main(int argc, char *argv[])
     Select s;
     HttpClient cli;
 
+    w.s = &s;
     QObject::connect(&s, &Select::selected, &cli, &HttpClient::doTranslate);
     QObject::connect(&cli, &HttpClient::finshTranslate, &w, &MainWindow::showText);
 

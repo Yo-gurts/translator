@@ -17,6 +17,7 @@ class Select : public QObject
     Q_OBJECT
 public:
     explicit Select(QObject *parent = nullptr);
+    void changeMode(int mode);
 
 private:
     QClipboard *clip;       /* 用于获取粘贴板内容、监听内容变化，单例模式 */
@@ -34,6 +35,7 @@ private slots:
     void timeout();
     void changed(QClipboard::Mode mode);
     void showButton();
+    void emitSelect();
 
 signals:
     /* 通知需要进行翻译 */

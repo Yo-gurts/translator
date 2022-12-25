@@ -26,11 +26,42 @@ Select::Select(QObject *parent)
     selectTimer.setSingleShot(true);
 
     /* 粘贴板中内容改变时，触发动作 */
-    QObject::connect(clip, &QClipboard::dataChanged, this, &Select::dataChanged);
+//    QObject::connect(clip, &QClipboard::dataChanged, this, &Select::dataChanged);
     QObject::connect(button, &QPushButton::clicked, this, &Select::clickButton);
     QObject::connect(&timer, &QTimer::timeout, this, &Select::timeout);
+    /* 选中的内容发改变时，触发动作 */
     QObject::connect(clip, &QClipboard::changed, this, &Select::changed);
     QObject::connect(&selectTimer, &QTimer::timeout, this, &Select::showButton);
+}
+
+/**
+ * @brief 调整触发模式
+ * @param mode
+ */
+void Select::changeMode(int mode)
+{
+    switch(mode) {
+    case 1:
+        disconnect(clip, &QClipboard::dataChanged, this, &Select::dataChanged);
+        disconnect(&selectTimer, &QTimer::timeout, this, &Select::emitSelect);
+        connect(clip, &QClipboard::changed, this, &Select::changed);
+        connect(&selectTimer, &QTimer::timeout, this, &Select::showButton);
+        break;
+    case 2:
+        disconnect(clip, &QClipboard::changed, this, &Select::changed);
+        connect(clip, &QClipboard::dataChanged, this, &Select::dataChanged);
+        break;
+    case 3:
+        disconnect(clip, &QClipboard::dataChanged, this, &Select::dataChanged);
+        disconnect(&selectTimer, &QTimer::timeout, this, &Select::showButton);
+        connect(clip, &QClipboard::changed, this, &Select::changed);
+        connect(&selectTimer, &QTimer::timeout, this, &Select::emitSelect);
+        break;
+    case 4:
+        disconnect(clip, &QClipboard::dataChanged, this, &Select::dataChanged);
+        disconnect(clip, &QClipboard::changed, this, &Select::changed);
+        break;
+    }
 }
 
 /**
@@ -105,5 +136,23 @@ void Select::showButton()
         button->move(pos);      /* 让按键显示在光标的位置 */
         timer.start(2000);      /* 开始 2 秒倒计时 */
         button->setVisible(true);
+    }
+}
+
+/**
+ * @brief 选中就翻译的模式下，处理数据的函数
+ */
+void Select::emitSelect()
+{
+    QString str = clip->text(QClipboard::Selection);
+
+    /* 针对 pdf 的内容 */
+    str.replace("\r\n", " ");
+    str.replace("\n", " ");
+
+    if (str != "") {
+        text = str;
+        qDebug() << "emitSelect: " << str;
+        emit selected(text);
     }
 }

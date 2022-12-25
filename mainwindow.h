@@ -1,6 +1,8 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "select.h"
+
 #include <QMainWindow>
 #include <QPushButton>
 #include <QClipboard>
@@ -11,6 +13,8 @@
 #include <QMouseEvent>
 #include <QSystemTrayIcon>
 #include <QMenu>
+#include <QRadioButton>
+#include <QButtonGroup>
 #include <QAction>
 
 QT_BEGIN_NAMESPACE
@@ -23,6 +27,7 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+    Select *s;              /* 用于调整触发模式 */
 
 public slots:
     void showText(QString str);
@@ -38,6 +43,11 @@ private:
     QSystemTrayIcon systemTrayIcon;
     QAction *closeAction;
     QMenu trayMenu;
+    QMenu *subMenu;         /* 触发模式 子菜单 */
+    QAction *mode1;         /* 选中弹按钮 */
+    QAction *mode2;         /* 复制弹按钮 */
+    QAction *mode3;         /* 选中就翻译 */
+    QAction *mode4;         /* 关闭所有 */
 
     /* 鼠标点击点与窗口左上角的距离，用于拖动窗口 */
     QPoint cursorPos;
@@ -51,5 +61,6 @@ protected:
 private slots:
     void doCopy();      /* 点击翻译按钮 */
     void doClose();     /* 点击复制按钮 */
+    void modeChange();  /* 调整触发模式 */
 };
 #endif // MAINWINDOW_H

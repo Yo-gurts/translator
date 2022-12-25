@@ -1,5 +1,6 @@
 # target file
 translator
+build
 
 # C++ objects and libs
 *.slo
