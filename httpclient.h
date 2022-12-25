@@ -42,7 +42,7 @@ private slots:
 
 signals:
     /* 通知已经获取到翻译结果 */
-    void finshTranslate(QString str);
+    void finishTranslate(QString str);
 };
 
 #endif // HTTPCLIENT_H

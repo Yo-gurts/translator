@@ -21,21 +21,14 @@ MainWindow::MainWindow(QWidget *parent)
     systemTrayIcon.setIcon(QIcon(":/icon/tray.png"));
     systemTrayIcon.setToolTip("translator");
     subMenu = new QMenu("触发模式", &trayMenu);
-    mode1 = new QAction("选中弹按钮", subMenu);
-    mode2 = new QAction("复制弹按钮", subMenu);
-    mode3 = new QAction("选中就翻译", subMenu);
-    mode4 = new QAction("关闭所有", subMenu);
+    for (int i = 0; i < 4; i++) {
+        mode[i] = new QAction(modeName[i], subMenu);
+        mode[i]->setCheckable(true);    /* 设置为可点击 */
+        subMenu->addAction(mode[i]);    /* 加入到子菜单中 */
+        connect(mode[i], &QAction::triggered, this, &MainWindow::modeChange);
+    }
 
-    mode1->setCheckable(true);  /* 设置为可点击 */
-    mode2->setCheckable(true);
-    mode3->setCheckable(true);
-    mode4->setCheckable(true);
-    subMenu->addAction(mode1);  /* 加入到子菜单中 */
-    subMenu->addAction(mode2);
-    subMenu->addAction(mode3);
-    subMenu->addAction(mode4);
-
-    mode1->setChecked(true);    /* 设置为默认模式 */
+    mode[0]->setChecked(true);    /* 设置为默认模式 */
     trayMenu.addMenu(subMenu);
     closeAction = new QAction("退出", &trayMenu);
     trayMenu.addAction(closeAction);
@@ -48,10 +41,6 @@ MainWindow::MainWindow(QWidget *parent)
     });
     connect(ui->closeButton, &QPushButton::clicked, this, &MainWindow::doClose);
     connect(ui->copyButton, &QPushButton::clicked, this, &MainWindow::doCopy);
-    connect(mode1, &QAction::triggered, this, &MainWindow::modeChange);
-    connect(mode2, &QAction::triggered, this, &MainWindow::modeChange);
-    connect(mode3, &QAction::triggered, this, &MainWindow::modeChange);
-    connect(mode4, &QAction::triggered, this, &MainWindow::modeChange);
 }
 
 MainWindow::~MainWindow()
@@ -60,7 +49,7 @@ MainWindow::~MainWindow()
 }
 
 /**
- * @brief 处理 finshTranslate 信号，将翻译结果显示在窗口中，若窗口出于可见状态，则不调整窗口位置。
+ * @brief 处理 finishTranslate 信号，将翻译结果显示在窗口中，若窗口出于可见状态，则不调整窗口位置。
  * @param str 翻译结果
  */
 void MainWindow::showText(QString str)
@@ -129,24 +118,20 @@ void MainWindow::doClose()
  */
 void MainWindow::modeChange()
 {
-    QAction* mode = qobject_cast<QAction*>(sender());
-    if (!mode)
+    int i;
+    QAction* newMode = qobject_cast<QAction*>(sender());
+    if (!newMode)
         return;
 
-    qDebug() << mode->text();
-    mode1->setChecked(false);
-    mode2->setChecked(false);
-    mode3->setChecked(false);
-    mode4->setChecked(false);
+    qDebug() << newMode->text();
+    for (i = 0; i < 4; i++)
+        mode[i]->setChecked(false);
 
-    mode->setChecked(true);
-    if (mode == mode1) {
-        s->changeMode(1);
-    } else if (mode == mode2) {
-        s->changeMode(2);
-    } else if (mode == mode3) {
-        s->changeMode(3);
-    } else if (mode == mode4) {
-        s->changeMode(4);
+    newMode->setChecked(true);
+    for (i = 0; i < 4; i++) {
+        if (newMode == mode[i]) {
+            s->changeMode(i+1);
+            break;
+        }
     }
 }

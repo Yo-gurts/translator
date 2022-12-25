@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
 
     w.s = &s;
     QObject::connect(&s, &Select::selected, &cli, &HttpClient::doTranslate);
-    QObject::connect(&cli, &HttpClient::finshTranslate, &w, &MainWindow::showText);
+    QObject::connect(&cli, &HttpClient::finishTranslate, &w, &MainWindow::showText);
 
     return a.exec();
 }

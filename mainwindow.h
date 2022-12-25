@@ -44,10 +44,8 @@ private:
     QAction *closeAction;
     QMenu trayMenu;
     QMenu *subMenu;         /* 触发模式 子菜单 */
-    QAction *mode1;         /* 选中弹按钮 */
-    QAction *mode2;         /* 复制弹按钮 */
-    QAction *mode3;         /* 选中就翻译 */
-    QAction *mode4;         /* 关闭所有 */
+    QVector<QString> modeName = {"选中弹按钮", "复制弹按钮", "选中就翻译", "关闭所有"};
+    QVector<QAction *> mode = {NULL, NULL, NULL, NULL};
 
     /* 鼠标点击点与窗口左上角的距离，用于拖动窗口 */
     QPoint cursorPos;

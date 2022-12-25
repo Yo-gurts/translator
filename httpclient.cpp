@@ -57,7 +57,7 @@ void HttpClient::replyFinished(QNetworkReply *reply)
         QJsonArray trans_result = jsonObj["trans_result"].toArray();
         const QJsonValue &trans = trans_result[0];
 
-        emit finshTranslate(trans["dst"].toString());
+        emit finishTranslate(trans["dst"].toString());
     } else {
         qDebug() << "request error: " << reply->error();
     }
